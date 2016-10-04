@@ -1,0 +1,19 @@
+---
+- include: tasks/deps.yml
+
+- name: install CFEngine
+  yum: name={{ redhat_url }} state=present
+  when: ansible_os_family == "RedHat" and ansible_lsb.major_release|int == 6
+
+- name: Check if CFEngine is installed
+  stat: path=/etc/init.d/{{ service_name }}
+  register: service_status
+
+- name: Check if Service is Stopped
+  service: name={{service_name}} state=stopped
+  when: service_status.stat.exists
+  register: service_stopped
+
+- name: Register CF Agent when installed
+  command: /usr/local/sbin/cf-agent -B {{cfengine_server}}
+  when: service_stopped

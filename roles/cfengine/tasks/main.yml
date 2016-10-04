@@ -1,0 +1,32 @@
+---
+- include: tasks/deps.yml
+
+- name: install {{ service_name }}
+  yum: name={{ redhat_url }} state=present
+  register: service_installation
+  when: ansible_os_family == "RedHat" and ansible_lsb.major_release|int == 6
+
+- name: Check if {{ service_name }} is installed
+  stat: path=/etc/init.d/{{ service_name }}
+  register: service_installed
+
+
+- name: Check the status of {{ service_name }}
+  shell: "service {{service_name}} status"
+  when: service_installed.stat.exists
+  register: service_status
+
+- name: Starts{{ service_name }}
+  shell: "service {{ service_name }} start"
+  when: "'not running' in service_status.stdout"
+  register: started
+
+- name: Register {{ service_name }} Agent when installed
+  command: /usr/local/sbin/cf-agent -B {{cfengine_server}}
+  when: service_installation.changed or started.changed 
+
+- name: check service status
+  debug: var=service_installation.changed
+
+- name: Check service status failed
+  debug: var=started
