@@ -1,0 +1,15 @@
+---
+- include: tasks/deps.yml
+
+- name: create docker file
+  template: src:Dockerfile.j2 dest:/containers/data/
+
+- name: data container
+  docker:
+    name: dpwebprd-`date +%s`
+    image: dpwebprd
+    state: present
+    expose:
+    - 8081
+    volumes:
+    - /containers/data/{{ ansible_hostname }}-`date +%s`

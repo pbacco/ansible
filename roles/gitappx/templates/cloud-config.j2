@@ -1,0 +1,34 @@
+#cloud-config
+
+hostname: "coreos1"
+
+# include one or more SSH public keys
+ssh_authorized_keys:
+- ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRHszou88PKuVrmRTt2x5zRZyZIKD+vmehmH0Ivv0YyGRG8Ycqnl8bsJnvsoIEz++PXu36Q6zcLNlXBplHQXMB7LMknXmUp+BRZPobV96EDhd+LrumvGbnRcxR6I3pMX1Xz/Xct6ChQpOPUJQoEtYLUi+eyRBW2JjL/P3NwOmpMAd9mR340pvmcQ3h1BJXO2p4cjPBVqxvMX5oWFQpnXJa8qR6Sw4t+vG/C1eej9LLsi/K8L/bVYmkDHQokNAaJtPM1twU22htHMfHlZV2V+vZKqu2o1BTY7UsJ+EqVDkxZCN9vi7lhITmZ5yN4uYLc61Auy2GNndQf9cGHZw5UOh3 camposp@campospdesktop
+
+coreos:
+  etcd2:
+        advertise-client-urls: "http://{{ ansible_default_ipv4.address }}:2379"
+        initial-advertise-peer-urls: "http://{{ ansible_default_ipv4.address }}:2380"
+        listen-client-urls: "http://{{ ansible_default_ipv4.address }}:2379,http://127.0.0.1:2379"
+        listen-peer-urls: "http://{{ ansible_default_ipv4.address }}:2380"
+        initial-cluster: "coreos1=http://{{ ansible_default_ipv4.address }}:2380,coreos2=http://192.168.122.102:2380,coreos3=http://192.168.122.103:2380"
+        initial-cluster-state: "new"
+        
+write_files:
+ - path: /etc/hosts
+     content: |
+        127.0.0.1     localhost
+        {{ ansible_default_ipv4.address }}          coreos1
+        192.168.122.102          coreos2
+        192.168.122.103          coreos3
+
+  fleet:
+    public-ip: {{ ansible_default_ipv4.address }}
+  flannel:
+    interface: {{ ansible_default_ipv4.address }}
+  units:
+    - name: etcd2.service
+      command: start
+    - name: fleet.service
+      command: start

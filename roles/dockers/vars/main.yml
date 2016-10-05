@@ -1,0 +1,11 @@
+---
+vc_path: "/export/apps/vc/"
+app_name: "myappx"
+site: "betvictor.pt"
+app_repo: "https://{{ githubuser | urlencode }}:{{ githubpassword }}@github.com/pbacco/cloudconfig.git"
+servername: "{{ ansible_hostname }}.{{ site }}"
+serveradmin: "admin@{{ site }}"
+documentrootdir: "{{ ansible_hostname }}.{{ site }}"
+errorlog: "{{ ansible_hostname }}.{{ site }}"
+customlog: "{{ ansible_hostname }}.{{ site }}"
+httpd_port: "8081"

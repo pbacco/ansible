@@ -1,0 +1,3 @@
+---
+- name: start CFEngine
+  service: name=cfengine3 state=started

@@ -1,0 +1,51 @@
+---
+- include: tasks/deps.yml
+
+- name: Apache Service
+  service: name=httpd state=started enabled=yes
+
+- name: Create app directory
+  file: state=directory path={{ vc_path }}/{{ app_name }}
+
+- name: Create the app user
+  user: home={{ vc_path }}/{{ app_name }} name={{ app_name }} state=present
+
+- name: Update the projct dir
+  file: group={{ app_name }} owner={{ app_name }} mode=755 state=directory path={{ vc_path }}/{{ app_name }}
+
+- name: Create the SSH directory.
+  file: state=directory path={{ vc_path }}/{{ app_name }}/.ssh/
+
+- name: Upload SSH Deploy key.
+  copy: src=key dest={{ vc_path }}/{{ app_name }}/.ssh/id_rsa mode=0600
+
+- name: Deploy git repository
+  git: >
+    dest={{ vc_path }}/{{ app_name }}/release{{ ansible_date_time.date }}
+    repo={{ app_repo }}
+    update=no
+
+- name: Create vhost directory
+  file: state=directory path=/var/www/html/{{ documentrootdir }}
+
+- name: Add index.html cloudconfig yml
+  template: src=indexhtml.j2 dest=/var/www/html/{{ documentrootdir }}/index.html
+
+- name: Edit cloudconfig yml
+  template: src=cloud-config.j2 dest={{ vc_path }}/{{ app_name }}/release{{ ansible_date_time.date }}/cloud-config
+
+- name: apache listen port
+  lineinfile: dest=/etc/httpd/conf/httpd.conf regexp="^Listen 80" line="Listen 8081" state=present
+  notify:
+    - restart httpd
+
+- name: create vhost
+  template: src=httpd_vhost.j2 dest=/etc/httpd/conf.d/{{ servername }}.conf
+  notify:
+    - restart httpd
+
+#- name: open ports on firewall
+#  iptables: action=insert chain=INPUT protocol=tcp ctstate=NEW,ESTABLISHED  destination_port=8081 jump=ACCEPT comment="Allow HTTPD"
+#  become: yes
+
+- command: iptables -I INPUT -p tcp -m tcp --dport 8081 -j ACCEPT 

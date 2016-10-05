@@ -1,0 +1,4 @@
+FROM local/dpweb6
+RUN yum -y install httpd; yum clean all; chkconfig httpd on
+EXPOSE {{ httpd_port }}
+CMD ["/usr/sbin/init"]

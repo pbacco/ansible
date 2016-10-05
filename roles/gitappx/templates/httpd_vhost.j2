@@ -1,0 +1,16 @@
+NameVirtualHost *:{{ httpd_port }}
+
+<VirtualHost *:{{ httpd_port }}>
+    ServerName {{ servername }}
+    DocumentRoot /var/www/html/{{ documentrootdir }}
+    ServerAdmin {{ serveradmin }}
+    ErrorLog logs/{{ errorlog }}-error_log
+    CustomLog logs/{{ customlog }}-access_log common
+
+    <Directory /var/www/html/{{ documentrootdir }}>
+        Options None
+    </Directory>
+
+{% include "files/apache/mod_rewrite/" + documentrootdir + ".conf" ignore missing %}
+
+</VirtualHost>

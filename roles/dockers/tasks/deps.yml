@@ -1,0 +1,11 @@
+---
+- name: Install Packages Deps
+  apt: name={{item}} state=present
+  with_items:
+       - docker.io
+       - sysstat
+       - dstat
+       - ntp
+       - dmidecode
+       - acpid
+  when: ansible_os_family == "Debian"
