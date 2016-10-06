@@ -37,10 +37,6 @@
   notify:
     - restart haproxy
 
-
-
-
-
 #- name: build the image
 #  docker_image: >
 #    name=dpwebprd
