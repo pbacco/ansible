@@ -1,3 +1,7 @@
 ---
-- name: start CFEngine
-  service: name=cfengine3 state=started
+- name: restart haproxy
+  command: "{{ item }}"
+  with_items:
+  - killall haproxy
+  - haproxy -f /etc/haproxy/haproxy.cfg
+  

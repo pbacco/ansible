@@ -1,4 +1,4 @@
 ---
-- hosts: prod
+- hosts: dockers
   roles:
-    - role: gitappx 
+    - role: dockers 

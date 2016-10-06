@@ -1,15 +1,57 @@
 ---
 - include: tasks/deps.yml
 
-- name: create docker file
-  template: src:Dockerfile.j2 dest:/containers/data/
+- name: Create containers directory
+  file: state=directory path=/containers/data/{{ ansible_hostname }}
 
-- name: data container
-  docker:
-    name: dpwebprd-`date +%s`
-    image: dpwebprd
-    state: present
-    expose:
-    - 8081
-    volumes:
-    - /containers/data/{{ ansible_hostname }}-`date +%s`
+- name: create docker file
+  template: src=Dockerfile.j2 dest=/containers/data/{{ ansible_hostname }}/Dockerfile
+
+- name: create vhost file
+  template: src=httpd_vhost.j2 dest=/containers/data/{{ ansible_hostname }}/vhost.conf
+
+- name: Add index.html  yml
+  template: src=indexhtml.j2 dest=/containers/data/{{ ansible_hostname }}/index.html
+
+- command: docker build --rm --tag={{ app_name}} /containers/data/betserver/.
+
+- command: docker run -dit -p {{ httpd_port }}:{{ httpd_port }} {{ app_name}}
+
+- name: LB Service
+  service: name=haproxy state=started enabled=yes
+
+- name: Set haproxy for the app
+  lineinfile:
+    dest: /etc/haproxy/haproxy.cfg
+    insertafter: EOF
+    line: "{{ item.line }}"
+  with_items:
+    - { line: "frontend {{ app_name}}" }
+    - { line: "    bind {{ ansible_eth0.ipv4.address }}:{{ lb_port }}" }
+    - { line: "    default_backend {{ app_name}}-servers" }
+    - { line: "" }
+    - { line: "backend {{ app_name}}-servers" }
+    - { line: "    balance    roundrobin" }
+    - { line: "    mode http" }
+    - { line: "server {{ ansible_hostname }}.{{ httpd_port }}  {{ ansible_eth0.ipv4.address }}:{{ httpd_port }} check" }
+  notify:
+    - restart haproxy
+
+
+
+
+
+#- name: build the image
+#  docker_image: >
+#    name=dpwebprd
+#    tag=v6
+#    path=/containers/data/Dockerfile
+#    state=present
+
+#- name: data container
+#  docker:
+#    name: dpwebprd-prod
+#    image: dpwebprd
+#    state: present
+#    expose:
+#    - 80
