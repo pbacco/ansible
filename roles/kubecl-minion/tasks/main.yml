@@ -1,0 +1,10 @@
+---
+- include: tasks/deps.yml
+
+- stat: path=/etc/kubernetes/kubelet.conf
+  register: minion_exists
+
+- command: kubeadm join --token 026325.e7ae1a4513763910 {{ ansible_enp0s3.address }}
+  when: minion_exists.stat == False
+
+- debug: var=

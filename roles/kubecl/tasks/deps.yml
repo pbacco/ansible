@@ -1,0 +1,28 @@
+---
+- command: wget https://packages.cloud.google.com/apt/doc/apt-key.gpg
+- command: apt-key add apt-key.gpg
+
+- file: path=/etc/apt/sources.list.d/kubernetes.list state=touch
+
+- name: Set kubeadm repo
+  lineinfile:
+    dest: /etc/apt/sources.list.d/kubernetes.list
+    insertafter: EOF
+    line: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+
+- command: apt-get update
+
+- name: Install Packages Deps
+  apt: name={{item}} state=present
+  with_items:
+       - docker.io
+       - ntp
+       - kubelet
+       - kubeadm
+       - kubectl
+       - kubernetes-cni
+       - dmidecode
+       - acpid
+       - apt-transport-https
+       - ca-certificates
+  when: ansible_os_family == "Debian"

@@ -1,4 +1,4 @@
 ---
-- hosts: dockers
+- hosts: kubecl
   roles:
-    - role: dockers 
+    - role: kubecl

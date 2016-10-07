@@ -1,0 +1,17 @@
+---
+vc_path: "/export/apps/vc/"
+#app_name: "websrv"
+site: "betvictor.pt"
+servername: "localhost.{{ site }}"
+serveradmin: "admin@{{ site }}"
+documentrootdir: "localhost.{{ site }}"
+errorlog: "localhost.{{ site }}"
+customlog: "localhost.{{ site }}"
+lb_mode: "http"
+#lb_port: "8080"
+#httpd_port: "8081"
+
+KUBE_VERSION: 1.2.0
+FLANNEL_VERSION: 0.5.0
+ETCD_VERSION: 2.2.0
+app_repo: https://github.com/kubernetes/kubernetes.git

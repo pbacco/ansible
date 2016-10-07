@@ -1,0 +1,9 @@
+---
+- include: tasks/deps.yml
+
+- stat: path=/etc/kubernetes/admin.conf
+  register: master_exists
+
+- command: kubeadm --api-advertise-addresses={{ ansible_enp0s3.address }}
+  when: master_exists.stat == False
+

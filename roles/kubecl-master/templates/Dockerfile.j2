@@ -1,0 +1,15 @@
+FROM centos:6
+MAINTAINER admin@{{ site }} 
+ENV container docker
+RUN yum --setopt=tsflags=nodocs -y install \
+		elinks \
+		httpd
+RUN rm -rf /var/cache/yum/* \
+RUN yum clean all
+RUN sed -i "s|Listen 80|Listen {{ httpd_port }}|g" /etc/httpd/conf/httpd.conf
+COPY ./vhost.conf /etc/httpd/conf.d/vhost.conf
+COPY ./index.html /var/www/html/index.html
+
+EXPOSE 80
+
+RUN echo "/sbin/service httpd start" >> /root/.bashrc

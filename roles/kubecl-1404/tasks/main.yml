@@ -1,0 +1,12 @@
+---
+- include: tasks/deps.yml
+
+- name: Create kube project directory
+  file: state=directory path=/kubernets/src/
+
+- name: Deploy kube project
+  git: >
+    dest=/kubernets/src/{{ ansible_date_time.date }}
+    repo={{ app_repo }}
+    depth=1
+    update=no

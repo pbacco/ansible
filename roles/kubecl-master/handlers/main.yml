@@ -1,0 +1,7 @@
+---
+- name: restart haproxy
+  command: "{{ item }}"
+  with_items:
+  - killall haproxy
+  - haproxy -f /etc/haproxy/haproxy.cfg
+  
