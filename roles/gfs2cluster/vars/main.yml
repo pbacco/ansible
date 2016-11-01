@@ -1,6 +1,7 @@
 ---
 mount: "/global/disk1"  ### Mount point for the global disk
-device: "/dev/sdb1"  ### Block Device to format
+device: "/dev/sdb"  ### Block Device to format
+partition: "1"
 cluster: "amqtestcl"  ### Cluster name
 journals: "2"  ### Number of possible nodes
 password: "bvcluster2016"
