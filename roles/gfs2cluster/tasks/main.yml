@@ -11,6 +11,9 @@
   filesystem: fstype=gfs2 dev={{ device }}{{ partition }} opts="-p lock_dlm -t {{ cluster }}:GFS -j {{ journals }}"
   run_once: true
 
+- name: Deploy cluster Conf
+  template: src=cluster.conf.j2 dest:{{ conf_path }}
+
 - name: Change password for cluster user
   user: name=ricci password={{ password }}
 
