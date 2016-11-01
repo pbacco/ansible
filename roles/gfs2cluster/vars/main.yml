@@ -3,3 +3,4 @@ mount: "/global/disk1"  ### Mount point for the global disk
 device: "/dev/sdb1"  ### Block Device to format
 cluster: "amqtestcl"  ### Cluster name
 journals: "2"  ### Number of possible nodes
+password: "bvcluster2016"
