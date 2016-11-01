@@ -1,9 +1,6 @@
 ---
 - include: tasks/deps.yml
 
-- name: Apache Service
-  service: name=httpd state=started enabled=yes
-
 - name: Create mount point
   file: state=directory path={{ mount }}
 
@@ -13,7 +10,3 @@
 - name: Format device
   filesystem: fstype=gfs2 dev={{ device }} opts="-p lock_dlm -t {{ cluster }}:GFS -j {{ journals }}"
   run_once: true
-
-
-
-
