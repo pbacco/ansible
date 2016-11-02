@@ -7,3 +7,4 @@ journals: "2"  ### Number of possible nodes
 password: "bvcluster2016" ### Password for the cluster management daemon
 conf_path: "/etc/cluster/cluster.conf" ### Main cluster config file
 service: "cman" ### Main service to be restarted
+repo: git@git.vcint.com:devops/puppet.git

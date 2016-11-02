@@ -24,3 +24,6 @@
      - ricci
      - luci
      - cman
+- name: Mount fs on both nodes
+  command: mount -t gfs2 {{ device }}{{ partition }} {{ mount }}
+
