@@ -1,0 +1,47 @@
+#!/bin/sh
+# ------------------------------------------------------------------------
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------
+# Configuration file for running Apache Active MQ as standalone provider
+#
+# This file overwrites the predefined settings of the sysv init-script
+PRG="$0"
+progname=`basename "$0"`
+saveddir=`pwd`
+# need this for relative symlinks
+dirname_prg=`dirname "$PRG"`
+cd "$dirname_prg"
+while [ -h "$PRG" ] ; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '.*/.*' > /dev/null; then
+    PRG="$link"
+  else
+    PRG=`dirname "$PRG"`"/$link"
+  fi
+done
+ACTIVEMQ_BASE=`dirname "$PRG"`/..
+cd "$saveddir"
+
+ACTIVEMQ_BASE=`cd "$ACTIVEMQ_BASE" && pwd`
+
+ACTIVEMQ_OPTS="$ACTIVEMQ_OPTS_MEMORY -Djava.util.logging.config.file=logging.properties -Djava.security.auth.login.config=$ACTIVEMQ_CONF/login.config"
+ACTIVEMQ_OPTS_MEMORY="-Dorg.apache.activemq.kahaDB.files.skipMetadataUpdate=true -XX:+UseG1GC -XX:MaxGCPauseMillis=500 -Xms6G -Xmx6G -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=20 -XX:GCLogFileSize=20M -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -Xloggc:/export/logs/amq01/gc.log -XX:MaxMetaspaceSize=256m -XX:OnOutOfMemoryError='kill -3 %p'"
+ACTIVEMQ_OPTS="$ACTIVEMQ_OPTS_MEMORY -Dorg.apache.activemq.UseDedicatedTaskRunner=false -Djava.util.logging.config.file=logging.properties"
+AMQ_JMX_PORT=`cat "$ACTIVEMQ_BASE"/conf/activemq-node.properties |grep 'managementContext.port=' | sed -n '/^managementContext.port=/s,^managementContext.port=,,p'`
+ACTIVEMQ_SUNJMX_CONTROL="--jmxurl service:jmx:rmi:///jndi/rmi://127.0.0.1:$AMQ_JMX_PORT/jmxrmi "
+JAVA_HOME="/export/local/java"
+
