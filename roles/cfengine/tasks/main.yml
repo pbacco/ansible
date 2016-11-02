@@ -9,7 +9,7 @@
 - name: Check if {{ service_name }} is installed
   stat: path=/etc/init.d/{{ service_name }}
   register: service_installed
-
+  notify: start CFEngine
 
 - name: Check the status of {{ service_name }}
   shell: "service {{service_name}} status"
@@ -18,15 +18,10 @@
 
 - name: Starts{{ service_name }}
   shell: "service {{ service_name }} start"
-  when: "'not running' in service_status.stdout"
+  when: "'is stopped' in service_status.stdout"
   register: started
 
 - name: Register {{ service_name }} Agent when installed
   command: /usr/local/sbin/cf-agent -B {{cfengine_server}}
   when: service_installation.changed or started.changed 
 
-- name: check service status
-  debug: var=service_installation.changed
-
-- name: Check service status failed
-  debug: var=started
