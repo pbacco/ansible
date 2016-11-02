@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<cluster config_version="11" name="{{ cluster }}">
+	<clusternodes>
+		<clusternode name="{{ node1 }}" nodeid="1">
+			<fence>
+				<method name="fence_vm"/>
+			</fence>
+		</clusternode>
+		<clusternode name="{{ node2 }}" nodeid="2">
+			<fence>
+				<method name="fence_vm"/>
+			</fence>
+		</clusternode>
+	</clusternodes>
+	<cman expected_votes="1" two_node="1"/>
+	<fencedevices>
+		<fencedevice agent="fence_vmware_soap" ipaddr="{{ vcenter }}" login="{{ vcenter_user }}" name="fence_vm" passwd="{{ vcenter_passwword }}" retry_on="3"/>
+	</fencedevices>
+	<rm>
+		<resources>
+			<clusterfs device="{{ device }}{{ partition }}" force_unmount="1" fsid="20426" fstype="gfs2" mountpoint="{{ mount }}" name="amqdisk" self_fence="1"/>
+		</resources>
+		<failoverdomains>
+			<failoverdomain name="amq" nofailback="1">
+				<failoverdomainnode name="{{ node1 }}"/>
+				<failoverdomainnode name="{{ node2 }}"/>
+			</failoverdomain>
+		</failoverdomains>
+		<service domain="amq" name="amqdisk" recovery="relocate">
+			<clusterfs ref="amqdisk"/>
+		</service>
+	</rm>
+</cluster>
