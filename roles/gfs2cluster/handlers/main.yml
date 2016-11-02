@@ -1,8 +1,4 @@
----
-- name: start CFEngine
-  service: name=cfengine3 state=started
-
-- name: restart httpd
+- name: restart {{ service }}
   service:
-    name=httpd
+    name={{ service }}
     state=restarted

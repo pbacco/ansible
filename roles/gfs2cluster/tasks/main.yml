@@ -16,6 +16,7 @@
 
 - name: Change password for cluster user
   user: name=ricci password={{ password }}
+  notify: restart {{ service }}
 
 - name: Start Cluster Services
   service: name={{ item }} state=started enabled=yes
