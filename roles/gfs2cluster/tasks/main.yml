@@ -24,6 +24,10 @@
      - ricci
      - luci
      - cman
-- name: Mount fs on both nodes
-  command: mount -t gfs2 {{ device }}{{ partition }} {{ mount }}
 
+- name: Mount gluster volume
+  mount:
+    name: "{{ mount }}"
+    src: "{{ device }}{{ partition }}"
+    fstype: gfs2
+    state: mounted

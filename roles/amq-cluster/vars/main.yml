@@ -3,6 +3,6 @@ mount: "/global/disk1"  ### Mount point for the global disk
 device: "/dev/sdb"  ### Block Device to format
 partition: "1"
 volume: "AMQ-V1"  ### Cluster name
-journals: "2"  ### Number of possible nodes
-password: "bvcluster2016"
 conf_path: "/etc/cluster/cluster.conf"
+brick: "/export/gluster/bricks"
+vol: "vol1"

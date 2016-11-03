@@ -4,8 +4,4 @@
   with_items:
        - git
        - svn
-       - httpd
-       - "@High Availability"
-       - "@Resilient Storage"
-       - "@High Availability Management"
   when: ansible_os_family == "RedHat"
