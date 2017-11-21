@@ -1,5 +1,0 @@
-vcenter: vcn01prd.mp.vcint.com
-node1: 192.168.56.21
-node2: 192.168.56.22
-vcenter_user: rhcluster
-vcenter_password: bvcluster2016
